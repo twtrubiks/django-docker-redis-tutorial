@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Gallery
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Leaderboard</h1>
+        </div>
+        {% for image in ranks %}
+            <div class="col-lg-12 thumb">
+                <a class="img-thumbnail" href="{{ image.url }}" target="_blank">
+                    <img alt="{{ image.url }}" data-src="{{ image.url }}" width="100" height="100">
+                </a>
+                Click rate : {{ image.value }}
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"> Gallery </h1>
+        </div>
+        <p class="text-center">View Count : {{ total_views }}</p>
+        {% for image in images %}
+            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                <div class="images">
+                    <a class="img-thumbnail" href="{{ image.id }}/">
+                        <img alt="{{ image.Url }}" data-src="{{ image.Url }}" width="250" height="350">
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+

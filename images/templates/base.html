@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+    {% load staticfiles %}
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          type="text/css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+
+        body {
+            padding-top: 20px; /* Required padding for .navbar-fixed-top. Change if height of navigation changes. */
+        }
+
+        .thumb {
+            margin-bottom: 20px;
+        }
+
+        .images {
+            display: inline-block;
+            float: left;
+            position: relative;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/10.4.2/lazyload.min.js"></script>
+<script src="{% static 'js/index.js' %}"></script>
+
+</body>
+
+</html>

@@ -2,13 +2,11 @@
 
  django-docker-redis-tutorial 基本教學  📝
 
-* [Youtube Tutorial Part1 - docker 安裝 redis 以及 redis 基本指令](xxx) - 待新增
+* [Youtube Tutorial Part1 - docker 安裝 redis 以及 redis 基本指令](https://youtu.be/BhO2ADEj_EE)
 
-* [Youtube Tutorial Part2 - django-redis 以及 redis api 介紹](xxxx) - 待新增
+* [Youtube Tutorial Part2 - django-redis 以及 redis api 介紹](https://youtu.be/fX_3UTKgjI8)
 
-* [Youtube Tutorial Part3 - redis 應用場合](xxxx) - 待新增
-
-* [Youtube Tutorial Part4 - 簡單實戰 redis](xxxx) - 待新增
+* [Youtube Tutorial Part3 - redis 應用場合以及實戰](https://youtu.be/xFNkpyd4Ues)
 
 ## 前言
 
@@ -24,13 +22,15 @@ message broker，像是可以透過 cache 減輕 database 的壓力 ( redis 讀�
 
 透過這篇文章，你將會學會
 
-* [透過 docker 安裝 redis](https://github.com/twtrubiks/django_docker_redis_tutorial#%E9%80%8F%E9%81%8E-docker-%E5%AE%89%E8%A3%9D-redis)
-* [redis 基本指令](https://github.com/twtrubiks/django_docker_redis_tutorial#redis-%E5%9F%BA%E6%9C%AC%E6%8C%87%E4%BB%A4)
-* [django-redis 介紹](https://github.com/twtrubiks/django_docker_redis_tutorial#django-redis)
-* [透過 low-level cache API 把玩 redis](https://github.com/twtrubiks/django_docker_redis_tutorial#%E9%80%8F%E9%81%8E-low-level-cache-api-%E6%8A%8A%E7%8E%A9-redis)
-* [redis 應用場合](https://github.com/twtrubiks/django_docker_redis_tutorial#redis-%E6%87%89%E7%94%A8%E5%A0%B4%E5%90%88)
+* [透過 docker 安裝 redis](https://github.com/twtrubiks/django-docker-redis-tutorial#%E9%80%8F%E9%81%8E-docker-%E5%AE%89%E8%A3%9D-redis)
+* [redis 基本指令](https://github.com/twtrubiks/django-docker-redis-tutorial#redis-%E5%9F%BA%E6%9C%AC%E6%8C%87%E4%BB%A4)
+* [django-redis 介紹](https://github.com/twtrubiks/django-docker-redis-tutorial#django-redis)
+* [透過 low-level cache API 把玩 redis](https://github.com/twtrubiks/django-docker-redis-tutorial#%E9%80%8F%E9%81%8E-low-level-cache-api-%E6%8A%8A%E7%8E%A9-redis)
+* [redis 應用場合](https://github.com/twtrubiks/django-docker-redis-tutorial#redis-%E6%87%89%E7%94%A8%E5%A0%B4%E5%90%88)
 
 ## 教學
+
+* [Youtube Tutorial Part1 - docker 安裝 redis 以及 redis 基本指令](https://youtu.be/BhO2ADEj_EE)
 
 在開始教學前，建議大家可以先閱讀官方的 [Redis Persistence](https://redis.io/topics/persistence) ，
 
@@ -213,6 +213,8 @@ redis 非常適合投票這種使用情境，可參考以下範例
 
 ## django-redis
 
+* [Youtube Tutorial Part2 - django-redis 以及 redis api 介紹](https://youtu.be/fX_3UTKgjI8)
+
 接下來和大家介紹 [django-redis](https://github.com/niwinz/django-redis) 這個套件，
 
 我將簡單介紹他的使用方法，請先安裝套件
@@ -221,7 +223,7 @@ redis 非常適合投票這種使用情境，可參考以下範例
 pip install django-redis
 ```
 
-接著在 [settings.py](https://github.com/twtrubiks/django_docker_redis_tutorial/blob/master/django_docker_redis_tutorial/settings.py) 中加入下方程式碼
+接著在 [settings.py](https://github.com/twtrubiks/django-docker-redis-tutorial/blob/master/django_docker_redis_tutorial/settings.py) 中加入下方程式碼
 
 ```python
 CACHES = {
@@ -239,7 +241,7 @@ Django 預設的 session 是存放在 database 中，但這邊要將他修改成
 
 修改的方式很簡單，只需要將 SESSION_ENGINE 改成 `django.contrib.sessions.backends.cache` 即可，
 
-Configure as session backend，在 [settings.py](https://github.com/twtrubiks/django_docker_redis_tutorial/blob/master/django_docker_redis_tutorial/settings.py) 中加入下方程式碼
+Configure as session backend，在 [settings.py](https://github.com/twtrubiks/django-docker-redis-tutorial/blob/master/django_docker_redis_tutorial/settings.py) 中加入下方程式碼
 
 ```python
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
@@ -495,6 +497,8 @@ class BaseCache:
 
 ## redis 應用場合
 
+* [Youtube Tutorial Part3 - redis 應用場合以及實戰](https://youtu.be/xFNkpyd4Ues)
+
 redis 可以應用的場合真的非常的多，這次的 demo 將使用到以下情境 ( 其他的情境大家可以再自行 google 了解 )，
 
 * 統計頁面點擊數
@@ -507,7 +511,7 @@ redis 可以應用的場合真的非常的多，這次的 demo 將使用到以�
 
 提到部分的概念。
 
-images/[views.py](https://github.com/twtrubiks/django_docker_redis_tutorial/blob/master/images/views.py) 中片段程式碼
+images/[views.py](https://github.com/twtrubiks/django-docker-redis-tutorial/blob/master/images/views.py) 中片段程式碼
 
 ```python
 cache.get_or_set('click', 0, timeout=None)
@@ -526,7 +530,7 @@ total_views = cache.incr('click')
 
 前面介紹 redis 適合投票這種情境，當然，也適合排行榜這種使用情境，
 
-images/[views.py](https://github.com/twtrubiks/django_docker_redis_tutorial/blob/master/images/views.py) 中片段程式碼
+images/[views.py](https://github.com/twtrubiks/django-docker-redis-tutorial/blob/master/images/views.py) 中片段程式碼
 
 ```python
 def index(request):
@@ -564,6 +568,8 @@ def detail(request, image_id):
 
 為了方便介紹，這邊直接使用登入 admin 後台來觀察 session，直接瀏覽 [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/) ，
 
+預設的帳號密碼為 ( twtrubiks / password123 )，
+
 登入後你會發現，你的 redis 多了 session 的 key 值（ 而 database 中沒有增加 ），如下圖
 
 redis 中多了 session 的 key
@@ -582,7 +588,7 @@ redis 中多了 session 的 key
 
 這邊和大家簡單說明如何減輕 database 的壓力:satisfied:
 
-可參考 musics/[views.py](https://github.com/twtrubiks/django_docker_redis_tutorial/blob/master/musics/views.py)
+可參考 musics/[views.py](https://github.com/twtrubiks/django-docker-redis-tutorial/blob/master/musics/views.py)
 
 ```python
 # Create your views here.

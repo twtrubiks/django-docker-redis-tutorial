@@ -616,7 +616,7 @@ class MusicViewSet(viewsets.ModelViewSet):
         return Response(musics, status=status.HTTP_200_OK)
 ```
 
-假設 database 的 music 這張表格中有一萬比資料，然後如果每個人每次發送 request 過來都要重新撈這一萬比資料，
+假設 database 的 music 這張表格中有一萬筆資料，然後如果每個人每次發送 request 過來都要重新撈這一萬筆資料，
 
 會對資料庫造成很大的壓力，也沒什麼效率，這時候就可以透過 redis 來幫助我們。
 
@@ -630,11 +630,11 @@ Django 的 version 使用方法可參考我之前寫的 [django-rest-framework-t
 
 以下是兩個的比較，
 
-第一次執行會從資料庫撈一萬比的資料
+第一次執行會從資料庫撈一萬筆的資料
 
 ![alt tag](https://i.imgur.com/4cmFeBD.png)
 
-第二次開始，都會從 **redis** 撈一萬比的資料 ( 速度快很多 )
+第二次開始，都會從 **redis** 撈一萬筆的資料 ( 速度快很多 )
 
 ![alt tag](https://i.imgur.com/UqR0Tst.png)
 

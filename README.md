@@ -46,6 +46,12 @@ message broker，像是可以透過 cache 減輕 database 的壓力 ( redis 讀�
 docker run --name some-redis  -p 6379:6379  -d redis redis-server --appendonly yes
 ```
 
+如果要設定密碼
+
+```cmd
+docker run --name some-redis  -p 6379:6379  -d redis redis-server --appendonly yes --requirepass "changeme"
+```
+
 以上這段指令，比較需要特別解釋的就是 `--appendonly`，當如果你沒有設定時，
 
 假如今天斷電或是不小心意外終止 redis，可能會遺失當下的資料，如果我們設定了 Append-only file ( AOF )，
@@ -64,6 +70,12 @@ AOF 預設的 policy 是每秒寫入一次 ( 當然，還是有可能會遺失�
 
 ```cmd
 docker exec -it d6b024f65e07 redis-cli
+```
+
+如果你有設定密碼要加上 `-a`
+
+```cmd
+docker exec -it d6b024f65e07 redis-cli -a changeme
 ```
 
 更多 redis 可參考 [redis command](https://redis.io/commands) 以及支援的 [redis data-types](https://redis.io/topics/data-types)。
@@ -123,6 +135,13 @@ OK
 (integer) 1
 127.0.0.1:6379> get num
 (nil)
+```
+
+一次刪除全部的 key
+
+```cmd
+127.0.0.1:6379> flushall
+OK
 ```
 
 得到目前全部的 keys，更多可參考 [KEYS pattern](https://redis.io/commands/keys)

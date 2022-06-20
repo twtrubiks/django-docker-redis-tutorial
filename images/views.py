@@ -37,7 +37,7 @@ def index(request):
 
 def detail(request, image_id):
     image = get_object_or_404(Image, id=image_id)
-    total_views = con.zincrby(name='images', value=image.url)
+    total_views = con.zincrby(name='images', amount=1 ,value=image.url)
     return render(request,
                   'images/detail.html', {
                       'image': image,

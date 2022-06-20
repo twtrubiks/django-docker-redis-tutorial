@@ -64,21 +64,23 @@ AOF 預設的 policy 是每秒寫入一次 ( 當然，還是有可能會遺失�
 
 更多詳細資料可參考 [append-only-file](https://redis.io/topics/persistence#append-only-file)。
 
+或是直接使用 [docker-compose.yml](docker-compose.yml).
+
 ### redis 基本指令
 
 確認建立完成後，即可使用 redis-cli 開始玩 redis
 
 ```cmd
-docker exec -it d6b024f65e07 redis-cli
+docker exec -it <container name> redis-cli
 ```
 
 如果你有設定密碼要加上 `-a`
 
 ```cmd
-docker exec -it d6b024f65e07 redis-cli -a changeme
+docker exec -it <container name> redis-cli -a changeme
 ```
 
-更多 redis 可參考 [redis command](https://redis.io/commands) 以及支援的 [redis data-types](https://redis.io/topics/data-types)。
+更多 redis 可參考 [redis command](https://redis.io/commands/) 以及支援的 [redis data-types](https://redis.io/docs/manual/data-types/)。
 
 ```cmd
 127.0.0.1:6379> ping
@@ -234,7 +236,7 @@ redis 非常適合投票這種使用情境，可參考以下範例
 
 * [Youtube Tutorial Part2 - django-redis 以及 redis api 介紹](https://youtu.be/fX_3UTKgjI8)
 
-接下來和大家介紹 [django-redis](https://github.com/niwinz/django-redis) 這個套件，
+接下來和大家介紹 [django-redis](https://github.com/jazzband/django-redis) 這個套件，
 
 我將簡單介紹他的使用方法，請先安裝套件
 
@@ -267,7 +269,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 ```
 
-詳細的 Session 參數介紹，可參考 Django 官網的 [sessions](https://docs.djangoproject.com/en/2.0/topics/http/sessions/) 文件，
+詳細的 Session 參數介紹，可參考 Django 官網的 [sessions](https://docs.djangoproject.com/en/4.0/topics/http/sessions/) 文件，
 
 設定完成後，Session 將會儲存在 redis 中（ 速度更快 ），
 
@@ -284,11 +286,11 @@ Session 存在 redis 中的範例，後面我會再介紹給各位。
 <redis.client.StrictRedis object at 0x2dc4510>
 ```
 
-更多詳細可參考 [Raw client access](http://niwinz.github.io/django-redis/latest/#_raw_client_access)，詳細文件可參考 [documentation](http://niwinz.github.io/django-redis/latest/)。
+可參考 [Raw client access](https://github.com/jazzband/django-redis#raw-client-access)
 
 ## 透過 low-level cache API 把玩 redis
 
-官方文件可參考 [The low-level cache API](https://docs.djangoproject.com/en/2.0/topics/cache/#the-low-level-cache-api)，
+官方文件可參考 [The low-level cache API](https://docs.djangoproject.com/en/4.0/topics/cache/#the-low-level-cache-api)，
 
 直接使用 Python Console 操作以下指令，
 
@@ -399,7 +401,7 @@ cache.decr('test',2)
 
 ### Cache versioning
 
-[Cache versioning](https://docs.djangoproject.com/en/2.0/topics/cache/#cache-versioning)
+[Cache versioning](https://docs.djangoproject.com/en/4.0/topics/cache/#cache-versioning)
 
 `incr_version()` and `decr_version()`
 
@@ -440,10 +442,12 @@ True
 
 原因是因為 django cache 本身的機制，
 
-[default.py#L511](https://github.com/niwinz/django-redis/blob/master/django_redis/client/default.py#L511)
+[default.py#L706](https://github.com/jazzband/django-redis/blob/master/django_redis/client/default.py#L706)
 
 ```python
-def make_key(self, key, version=None, prefix=None):
+def make_key(
+    self, key: Any, version: Optional[Any] = None, prefix: Optional[str] = None
+) -> CacheKey:
     if isinstance(key, CacheKey):
         return key
 
@@ -458,17 +462,17 @@ def make_key(self, key, version=None, prefix=None):
 
 django 使用 make_key 建立新的 key ，原始的 key 在 `_backend.key_func` 裡。
 
-[base.py#L25](https://github.com/django/django/blob/master/django/core/cache/backends/base.py#L25)
+[base.py#L31](https://github.com/django/django/blob/main/django/core/cache/backends/base.py#L31)
 
 ```python
 def default_key_func(key, key_prefix, version):
     """
     Default function to generate keys.
     Construct the key used by all other methods. By default, prepend
-    the `key_prefix'. KEY_FUNCTION can be used to specify an alternate
+    the `key_prefix`. KEY_FUNCTION can be used to specify an alternate
     function with custom key making behavior.
     """
-    return '%s:%s:%s' % (key_prefix, version, key)
+    return "%s:%s:%s" % (key_prefix, version, key)
 
 
 def get_key_func(key_func):
@@ -485,8 +489,10 @@ def get_key_func(key_func):
 
 
 class BaseCache:
+    _missing_key = object()
+
     def __init__(self, params):
-        timeout = params.get('timeout', params.get('TIMEOUT', 300))
+        timeout = params.get("timeout", params.get("TIMEOUT", 300))
         if timeout is not None:
             try:
                 timeout = int(timeout)
@@ -494,22 +500,22 @@ class BaseCache:
                 timeout = 300
         self.default_timeout = timeout
 
-        options = params.get('OPTIONS', {})
-        max_entries = params.get('max_entries', options.get('MAX_ENTRIES', 300))
+        options = params.get("OPTIONS", {})
+        max_entries = params.get("max_entries", options.get("MAX_ENTRIES", 300))
         try:
             self._max_entries = int(max_entries)
         except (ValueError, TypeError):
             self._max_entries = 300
 
-        cull_frequency = params.get('cull_frequency', options.get('CULL_FREQUENCY', 3))
+        cull_frequency = params.get("cull_frequency", options.get("CULL_FREQUENCY", 3))
         try:
             self._cull_frequency = int(cull_frequency)
         except (ValueError, TypeError):
             self._cull_frequency = 3
 
-        self.key_prefix = params.get('KEY_PREFIX', '')
-        self.version = params.get('VERSION', 1)
-        self.key_func = get_key_func(params.get('KEY_FUNCTION'))
+        self.key_prefix = params.get("KEY_PREFIX", "")
+        self.version = params.get("VERSION", 1)
+        self.key_func = get_key_func(params.get("KEY_FUNCTION"))
 ```
 
 這也就是為什麼透過 django 設定的 key 都會變成 `%s:%s:%s` 這樣的格式了。
@@ -570,7 +576,7 @@ def index(request):
 
 def detail(request, image_id):
     image = get_object_or_404(Image, id=image_id)
-    total_views = con.zincrby(name='images', value=image.url)
+    total_views = con.zincrby(name='images', amount=1 ,value=image.url)
     return render(request,
                   'images/detail.html', {
                       'image': image,
@@ -666,7 +672,7 @@ Django 的 version 使用方法可參考我之前寫的 [django-rest-framework-t
 先安裝 [loadtest](https://www.npmjs.com/package/loadtest)
 
 ```cmd
-npm install -g loadtest
+npm install --location=global loadtest
 ```
 
 使用方法
@@ -678,7 +684,7 @@ loadtest [-n requests] [-c concurrency] [-k] URL
 先來測試 **沒有 redis** 的情況 ( 50 個 request )
 
 ```cmd
-loadtest -H "Authorization: Basic dHd0cnViaWtzOnBhc3N3b3JkMTIz" -n 50 -k  http://127.0.0.1:8000/api/music/
+loadtest -H "Authorization: Basic dHd0cnViaWtzOnBhc3N3b3JkMTIz" -n 50 -k  http://127.0.0.1:8000/api/musics/
 ```
 
 如下圖，慢到我不想等他跑完 :sweat: ( 還在 38%)
@@ -688,7 +694,7 @@ loadtest -H "Authorization: Basic dHd0cnViaWtzOnBhc3N3b3JkMTIz" -n 50 -k  http:/
 再來測試 **有 redis** 的情況 ( 50 個 request )
 
 ```cmd
-loadtest -H "Authorization: Basic dHd0cnViaWtzOnBhc3N3b3JkMTIz" -H "Accept: application/json;version=1.0" -n 50 -k  http://127.0.0.1:8000/api/music/
+loadtest -H "Authorization: Basic dHd0cnViaWtzOnBhc3N3b3JkMTIz" -H "Accept: application/json;version=1.0" -n 50 -k  http://127.0.0.1:8000/api/musics/
 ```
 
 如下圖，很快就跑完了，而且花最久的時間是 229ms
@@ -696,6 +702,48 @@ loadtest -H "Authorization: Basic dHd0cnViaWtzOnBhc3N3b3JkMTIz" -H "Accept: appl
 ![alt tag](https://i.imgur.com/aPvSww8.png)
 
 可以發現，有 redis 的情況下，效能好很多:heart_eyes:
+
+後面我有再補充另一段 code, [musics/views.py](https://github.com/twtrubiks/django-docker-redis-tutorial/blob/master/musics/views.py)
+
+```python
+def list_lock(self, request, **kwargs):
+    if self.request.version == '1.0':
+        if 'musics' in cache:
+            # from cache get musics
+            musics = cache.get('musics')
+        else:
+            if con.set("my_key", "secret", nx=True, px=1000):
+                musics = Music.objects.all()
+                serializer = MusicSerializer(musics, many=True)
+                musics = serializer.data
+                cache.set('musics', musics, timeout=None)
+                print('store data to cache')
+            else:
+                print("pending")
+                while 1:
+                    time.sleep(0.5)
+                    print('sleep')
+                    if 'musics' in cache:
+                        musics = cache.get('musics')
+                        print('break')
+                        break
+    ......
+    return Response(musics, status=status.HTTP_200_OK)
+```
+
+主要是透過 redis 的鎖, 確保當下只有一個 request 可以進 db 拿資料,
+
+剩下的 request 全部 pending, 直到 redis 有資料.
+
+請搭配以下測試
+
+```cmd
+loadtest -H "Authorization: Basic dHd0cnViaWtzOjEyMw==" -H "Accept: application/json;version=1.0" -n 15 -c 15 -k http://127.0.0.1:8000/api/musics/
+```
+
+(要多測幾次, 確保有顯示 "pending" )
+
+![alt tag](https://i.imgur.com/nT6Ar8C.png)
 
 相信這時候大家又會問，不過這樣子 redis 裡面的資料有很高的機會是舊的，沒錯，所以更好的方法，
 
@@ -739,12 +787,12 @@ loadtest -H "Authorization: Basic dHd0cnViaWtzOnBhc3N3b3JkMTIz" -H "Accept: appl
 
 ## 執行環境
 
-* Python 3.6.4
+* Python 3.8
 
 ## Reference
 
 * [Django](https://www.djangoproject.com/)
-* [django-redis](https://github.com/niwinz/django-redis)
+* [django-redis](https://github.com/jazzband/django-redis)
 * [Redis](https://redis.io/)
 * [loadtest](https://www.npmjs.com/package/loadtest)
 

@@ -1,0 +1,14 @@
+version: '3.5'
+
+services:
+  django-cache:
+    image: redis
+    container_name: django-redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - django-data:/data
+volumes:
+  django-data:
+    driver: local

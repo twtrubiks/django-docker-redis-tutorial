@@ -6,7 +6,8 @@
     <title>
         {% block title %}{% endblock %}
     </title>
-    {% load staticfiles %}
+    <!-- https://docs.djangoproject.com/en/dev/releases/3.0/#features-removed-in-3-0 -->
+    {% load static %}
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           type="text/css"/>
